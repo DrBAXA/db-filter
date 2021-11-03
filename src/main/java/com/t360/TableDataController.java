@@ -4,6 +4,8 @@ import com.t360.filtering.core.QueryNode;
 import com.t360.database.DatabaseQueryService;
 import com.t360.filtering.core.parsing.ParsingException;
 import com.t360.filtering.core.parsing.QueryTreeParsingService;
+import com.t360.filtering.tables.Negotiation;
+import com.t360.filtering.tables.NegotiationRow;
 
 public class TableDataController {
 
@@ -17,7 +19,7 @@ public class TableDataController {
     }
 
     public String[][] getNegotiationTableData(String jsonQuery) throws ParsingException {
-        QueryNode query = queryTreeParsingService.parse(jsonQuery);
+        QueryNode<NegotiationRow> query = queryTreeParsingService.parse(jsonQuery, Negotiation.class);
         return databaseQueryService.query(() -> new StringBuilder("SELECT * FROM NEGOTIATION"), query);
     }
 }

@@ -1,21 +1,17 @@
 package com.t360.filtering.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.t360.filtering.tables.ColumnDescription;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.function.Predicate;
 
-@Data
-public final class ColumnPredicate<R, T extends Enum<T> & ColumnDescription<R>> implements QueryNode<R> {
+@Value
+public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T>{
 
-    @JsonProperty
-    String field;
-    @JsonProperty
+    F field;
     Object value;
-    @JsonProperty
     ComparingOperator comparingOperator;
 
     /*
@@ -29,8 +25,8 @@ public final class ColumnPredicate<R, T extends Enum<T> & ColumnDescription<R>> 
     }
 
     @Override
-    public Predicate<R> generateJavaPredicate() {
-        return createPredicate(null, value, comparingOperator);
+    public Predicate<T> generateJavaPredicate() {
+        return createPredicate(field, value, comparingOperator);
     }
 
     /*
@@ -38,9 +34,13 @@ public final class ColumnPredicate<R, T extends Enum<T> & ColumnDescription<R>> 
      *  When I will finish my work we will use fields here but for now use these arguments please
      *  Currently field is just a string but I'm working to convert it into an enum value
      */
-    private Predicate<R> createPredicate(T tableEnum, Object value, ComparingOperator operator) {
-        return null;
+    private Predicate<T> createPredicate(F tableEnum, Object value, ComparingOperator operator) {
+        if (operator == ComparingOperator.NOT_EQUAL) {
+            return entity -> !tableEnum.getFieldAccessor().apply(entity).equals(value);
+        }
+        return any -> false;
     }
+
 
     public enum ComparingOperator {
 

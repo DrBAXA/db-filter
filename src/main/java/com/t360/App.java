@@ -15,17 +15,15 @@ public class App {
 
         TableDataController tableDataController = new TableDataController(queryTreeParsingService, databaseQueryService);
 
-        final String[][] negotiationTableData = tableDataController.getNegotiationTableData("""
-                {
-                  "predicates": [
-                    {
-                      "field": "Currency1",
-                      "value": "UAH",
-                      "comparingOperator": "!="
-                    }
-                  ]
-                }
-                """);
+        final String[][] negotiationTableData = tableDataController.getNegotiationTableData("{\n" +
+                "                  \"predicates\": [\n" +
+                "                    {\n" +
+                "                      \"field\": \"Currency1\",\n" +
+                "                      \"value\": \"UAH\",\n" +
+                "                      \"comparingOperator\": \"<\"\n" +
+                "                    }\n" +
+                "                  ]\n" +
+                "                }");
 
         for (String[] negotiationTableRow : negotiationTableData) {
             for (String column : negotiationTableRow) {

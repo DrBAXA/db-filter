@@ -19,12 +19,12 @@ public class DatabaseQueryService {
     public DatabaseQueryService() {
     }
 
-    public String[][] query(TableQuery tableQuery, QueryNode filterQuery) {
+    public String[][] query(TableQuery tableQuery, QueryNode<?> filterQuery) {
         List<String[]> result = new ArrayList<>();
         final String sql = getSQL(tableQuery, filterQuery);
         log.debug("Executing query " + sql);
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);){
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)){
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -44,7 +44,7 @@ public class DatabaseQueryService {
         return result.toArray(new String[0][]);
     }
 
-    private String getSQL(TableQuery tableQuery, QueryNode filterQuery) {
+    private String getSQL(TableQuery tableQuery, QueryNode<?> filterQuery) {
         StringBuilder queryBuilder = tableQuery.selectAllQuery().append(" WHERE ");
         final int initialLength = queryBuilder.length();
         filterQuery.generateSQLQuery(queryBuilder);
