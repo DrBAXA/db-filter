@@ -2,13 +2,14 @@ package com.t360.filtering.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.t360.filtering.tables.ColumnDescription;
 import lombok.Data;
 import lombok.Getter;
 
 import java.util.function.Predicate;
 
 @Data
-public final class ColumnPredicate<T extends Enum<T>> implements QueryNode {
+public final class ColumnPredicate<R, T extends Enum<T> & ColumnDescription<R>> implements QueryNode<R> {
 
     @JsonProperty
     String field;
@@ -28,7 +29,16 @@ public final class ColumnPredicate<T extends Enum<T>> implements QueryNode {
     }
 
     @Override
-    public <R> Predicate<R> generateJavaPredicate() {
+    public Predicate<R> generateJavaPredicate() {
+        return createPredicate(null, value, comparingOperator);
+    }
+
+    /*
+     * TODO Illia pleas implement this method
+     *  When I will finish my work we will use fields here but for now use these arguments please
+     *  Currently field is just a string but I'm working to convert it into an enum value
+     */
+    private Predicate<R> createPredicate(T tableEnum, Object value, ComparingOperator operator) {
         return null;
     }
 

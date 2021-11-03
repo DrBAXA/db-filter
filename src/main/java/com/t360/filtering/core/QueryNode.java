@@ -13,7 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.*;
         @Type(QueryTree.class),
         @Type(ColumnPredicate.class)
 })
-public sealed interface QueryNode permits QueryTree, ColumnPredicate {
+public sealed interface QueryNode<T> permits QueryTree, ColumnPredicate {
 
     /*
      * TODO add a method to fulfill prepared statement
@@ -21,7 +21,7 @@ public sealed interface QueryNode permits QueryTree, ColumnPredicate {
      */
     void generateSQLQuery(StringBuilder queryBuilder);
 
-    <T> Predicate<T> generateJavaPredicate();
+    Predicate<T> generateJavaPredicate();
 
 
 }
