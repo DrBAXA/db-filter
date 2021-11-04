@@ -12,6 +12,6 @@ public interface ColumnDescription<T> {
 
     Class<?> getFieldType();
 
-    Function<T, ? extends Comparable<T>> getFieldAccessor();
+    Function<T, ?> getFieldAccessor();
 
 }

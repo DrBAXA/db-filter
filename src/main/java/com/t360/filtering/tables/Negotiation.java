@@ -33,7 +33,10 @@ public enum Negotiation implements ColumnDescription<NegotiationRow> {
     private final String columnName;
     @Getter
     private final Class<?> fieldType;
-    @Getter
     private final Function<NegotiationRow, ?> fieldAccessor;
 
+    @Override
+    public Function<NegotiationRow, ?> getFieldAccessor() {
+        return fieldAccessor;
+    }
 }

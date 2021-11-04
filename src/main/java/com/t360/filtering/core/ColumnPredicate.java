@@ -5,6 +5,7 @@ import com.t360.filtering.tables.ColumnDescription;
 import lombok.Getter;
 import lombok.Value;
 
+import java.math.BigDecimal;
 import java.util.function.Predicate;
 
 @Value
@@ -12,7 +13,7 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
 
     private static final char APOSTROPHE = '\'';
     F field;
-    T value;
+    Object value;
     ComparingOperator comparingOperator;
 
     /*
@@ -30,17 +31,40 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
         return createPredicate(field, value, comparingOperator);
     }
 
-    private Predicate<T> createPredicate(F tableEnum, T value, ComparingOperator operator) {
+    private Predicate<T> createPredicate(F tableEnum, Object value, ComparingOperator operator) {
         return entity -> {
-            int c = tableEnum.getFieldAccessor().apply(entity).compareTo(value);
+            int c = 0;
+            Object fieldValue = tableEnum.getFieldAccessor().apply(entity);
+            if (!fieldValue.getClass().getName().equals(value.getClass().getName()))
+                return false;
+            else if (fieldValue instanceof Comparable && value instanceof Comparable)
+                c = ((Comparable) fieldValue).compareTo(value);
+            else {
+                if (fieldValue instanceof BigDecimal) {
+                    c = ((BigDecimal) fieldValue).compareTo((BigDecimal) value);
+                } else if (fieldValue instanceof Long) {
+                    c = ((Long) fieldValue).compareTo((Long) value);
+                } else if (fieldValue instanceof Integer) {
+                    c = ((Integer) fieldValue).compareTo((Integer) value);
+                } else if (fieldValue instanceof String) {
+                    c = ((String) fieldValue).compareTo((String) value);
+                }
+            }
             switch (operator) {
-                case LESS_OR_EQUAL: return c <= 0;
-                case LESS: return c < 0;
-                case GREATER: return c > 0;
-                case GREATER_OR_EQUAL: return c >= 0;
-                case NOT_EQUAL:  return c != 0;
-                case EQUAL:  return c == 0;
-                default: return false;
+                case LESS_OR_EQUAL:
+                    return c <= 0;
+                case LESS:
+                    return c < 0;
+                case GREATER:
+                    return c > 0;
+                case GREATER_OR_EQUAL:
+                    return c >= 0;
+                case NOT_EQUAL:
+                    return c != 0;
+                case EQUAL:
+                    return c == 0;
+                default:
+                    return false;
             }
         };
     }
@@ -53,8 +77,7 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
         LESS_OR_EQUAL("<=", "<="),
         GREATER(">", ">"),
         GREATER_OR_EQUAL(">=", ">="),
-        NOT_EQUAL("!=", "!=")
-        ;
+        NOT_EQUAL("!=", "!=");
 
         @Getter
         @JsonValue
