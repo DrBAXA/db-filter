@@ -41,7 +41,7 @@ class FlatTreeParsingServiceTest {
                 "                    {\n" +
                 "                      \"field\": \"Currency1\",\n" +
                 "                      \"value\": \"UAH\",\n" +
-                "                      \"comparingOperator\": \"!=\"\n" +
+                "                      \"comparingOperator\": \"<>\"\n" +
                 "                    }\n" +
                 "                  ]\n" +
                 "                }", Negotiation.class);
@@ -49,7 +49,7 @@ class FlatTreeParsingServiceTest {
         final StringBuilder queryBuilder = new StringBuilder();
         queryNode.appendWhereClause(queryBuilder);
 
-        assertEquals("Currency1!='UAH'", queryBuilder.toString());
+        assertEquals("(CURRENCY1!='UAH')", queryBuilder.toString());
     }
 
     @Test
@@ -59,7 +59,7 @@ class FlatTreeParsingServiceTest {
                 "                    {\n" +
                 "                      \"field\": \"Currency1\",\n" +
                 "                      \"value\": \"UAH\",\n" +
-                "                      \"comparingOperator\": \"!=\"\n" +
+                "                      \"comparingOperator\": \"<>\"\n" +
                 "                    },{\n" +
                 "                      \"field\": \"Product\",\n" +
                 "                      \"value\": \"TEST\",\n" +
@@ -71,7 +71,7 @@ class FlatTreeParsingServiceTest {
         final StringBuilder queryBuilder = new StringBuilder();
         queryNode.appendWhereClause(queryBuilder);
 
-        assertEquals("Currency1!='UAH' AND Product='TEST'", queryBuilder.toString());
+        assertEquals("(CURRENCY1!='UAH' AND PRODUCT='TEST')", queryBuilder.toString());
     }
 
     @Test
@@ -81,7 +81,7 @@ class FlatTreeParsingServiceTest {
                 "                    {\n" +
                 "                      \"field\": \"Currency1\",\n" +
                 "                      \"value\": \"UAH\",\n" +
-                "                      \"comparingOperator\": \"!=\"\n" +
+                "                      \"comparingOperator\": \"<>\"\n" +
                 "                    }\n" +
                 "                  ]\n" +
                 "                }", Negotiation.class);

@@ -6,7 +6,6 @@ import lombok.Value;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 /**
  * Class represents a tree node of an expression tree
@@ -56,10 +55,9 @@ public class QueryTree<T> implements QueryNode<T> {
      */
     @Override
     public Predicate<T> generateJavaPredicate() {
-        final Stream<Predicate<T>> subtreesStream = predicates.stream().map(QueryNode::generateJavaPredicate);
         switch (operator) {
-            case AND: return value -> subtreesStream.allMatch(p -> p.test(value));
-            case OR: return value -> subtreesStream.anyMatch(p -> p.test(value));
+            case AND: return value -> predicates.stream().map(QueryNode::generateJavaPredicate).allMatch(p -> p.test(value));
+            case OR: return value -> predicates.stream().map(QueryNode::generateJavaPredicate).anyMatch(p -> p.test(value));
             default: throw new IllegalStateException("New Operator enum value added"); // should never happen
         }
     }

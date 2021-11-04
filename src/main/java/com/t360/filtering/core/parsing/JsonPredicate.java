@@ -10,7 +10,7 @@ public final class JsonPredicate implements JsonQuery {
     @JsonProperty
     String field;
     @JsonProperty
-    Object value;
+    String value;
     @JsonProperty
     ComparingOperator comparingOperator;
 

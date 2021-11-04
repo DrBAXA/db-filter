@@ -3,15 +3,29 @@ package com.t360.filtering.core;
 import com.t360.filtering.tables.ColumnDescription;
 import lombok.Value;
 
+
+import java.util.Collection;
 import java.util.function.Predicate;
 
+/**
+ * Represents a single predicate on a column value
+ * @param <T> type of entity
+ * @param <F> type of table describing enum
+ */
 @Value
 public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T> {
 
     private static final char APOSTROPHE = '\'';
+
     F field;
     Object value;
     ComparingOperator comparingOperator;
+
+    public ColumnPredicate(F field, String value, ComparingOperator operator) {
+        this.field = field;
+        this.value = FieldInstantiationUtil.parseValue(field, operator, value);
+        this.comparingOperator = operator;
+    }
 
     /*
      * TODO convert to  prepared statement and placeholder
@@ -53,8 +67,11 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
 
             // Null is not permitted for predicate object here
             if (value == null) {
-                return false;
-//                throw new ParsingException("Null values are not permitted, use IS_NULL or IS_NOT_NULL operators instead"); //
+                throw new IllegalArgumentException("Null values are not permitted, use IS_NULL or IS_NOT_NULL operators instead.");
+            }
+
+            if (operator == ComparingOperator.IN || operator == ComparingOperator.NOT_IN) {
+                return handleInClause(fieldValue, value, operator);
             }
 
             // Values are of the same class and comparable so just compare
@@ -65,18 +82,21 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
                 return examineComparison(operator, c);
             }
 
-            // If values are both numbers we still can compare
-            if (isComparableAsNumbers(fieldValue.getClass(), value.getClass())) {
-                return compareNumbers((Number) fieldValue, (Number) value);
-            }
-
             throw new IllegalArgumentException("Wrong data type found");
         };
 
     }
 
-    private boolean compareNumbers(Number fieldValue, Number value) {
-        return false;
+    private boolean handleInClause(Object fieldValue, Object value, ComparingOperator operator) {
+        // must be a collection for IN clause
+        if (!(value instanceof Collection)) {
+            throw new IllegalArgumentException("List value should be provided for IN and NOT IN clauses.");
+        }
+
+        final boolean contains = ((Collection<?>) value).contains(fieldValue);
+
+        //noinspection SimplifiableConditionalExpression
+        return operator == ComparingOperator.IN ? contains : !contains;
     }
 
     private boolean examineComparison(ComparingOperator operator, int c) {
@@ -96,10 +116,6 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
             default:
                 return false;
         }
-    }
-
-    private boolean isComparableAsNumbers(Class<?> fieldClass, Class<?> valueClass) {
-        return Number.class.isAssignableFrom(fieldClass) && Number.class.isAssignableFrom(valueClass);
     }
 
 }

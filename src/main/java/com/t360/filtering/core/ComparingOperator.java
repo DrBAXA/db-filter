@@ -10,7 +10,9 @@ public enum ComparingOperator {
     LESS_OR_EQUAL("<=", "<="),
     GREATER(">", ">"),
     GREATER_OR_EQUAL(">=", ">="),
-    NOT_EQUAL("!=", "!="),
+    NOT_EQUAL("<>", "!="),
+    IN("IN", "IN "),
+    NOT_IN("NOT IN", "NOT IN"),
     IS_NULL("IS NULL", "IS NULL"),
     IS_NOT_NULL("IS NOT NULL", "IS NOT NULL");
 
