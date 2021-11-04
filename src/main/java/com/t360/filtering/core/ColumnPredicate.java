@@ -8,10 +8,11 @@ import lombok.Value;
 import java.util.function.Predicate;
 
 @Value
-public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T>{
+public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T> {
 
+    private static final char APOSTROPHE = '\'';
     F field;
-    Object value;
+    T value;
     ComparingOperator comparingOperator;
 
     /*
@@ -21,7 +22,7 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
      */
     @Override
     public void generateSQLQuery(StringBuilder queryBuilder) {
-        queryBuilder.append(field).append(comparingOperator.getSqlSign()).append('\'').append(value).append('\'');
+        queryBuilder.append(field).append(comparingOperator.getSqlSign()).append(APOSTROPHE).append(value).append(APOSTROPHE);
     }
 
     @Override
@@ -29,16 +30,19 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
         return createPredicate(field, value, comparingOperator);
     }
 
-    /*
-     * TODO Illia pleas implement this method
-     *  When I will finish my work we will use fields here but for now use these arguments please
-     *  Currently field is just a string but I'm working to convert it into an enum value
-     */
-    private Predicate<T> createPredicate(F tableEnum, Object value, ComparingOperator operator) {
-        if (operator == ComparingOperator.NOT_EQUAL) {
-            return entity -> !tableEnum.getFieldAccessor().apply(entity).equals(value);
-        }
-        return any -> false;
+    private Predicate<T> createPredicate(F tableEnum, T value, ComparingOperator operator) {
+        return entity -> {
+            int c = tableEnum.getFieldAccessor().apply(entity).compareTo(value);
+            switch (operator) {
+                case LESS_OR_EQUAL: return c <= 0;
+                case LESS: return c < 0;
+                case GREATER: return c > 0;
+                case GREATER_OR_EQUAL: return c >= 0;
+                case NOT_EQUAL:  return c != 0;
+                case EQUAL:  return c == 0;
+                default: return false;
+            }
+        };
     }
 
 

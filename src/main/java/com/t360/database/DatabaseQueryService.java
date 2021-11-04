@@ -24,7 +24,7 @@ public class DatabaseQueryService {
         final String sql = getSQL(tableQuery, filterQuery);
         log.debug("Executing query " + sql);
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
