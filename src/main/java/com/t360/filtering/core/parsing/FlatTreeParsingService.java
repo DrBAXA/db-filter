@@ -14,9 +14,6 @@ public class FlatTreeParsingService implements QueryTreeParsingService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /*
-     * TODO need to think how to parse general query for different tables
-     */
     @Override
     public synchronized <T, F extends Enum<F> & ColumnDescription<T>> QueryNode<T> parse(String jsonQuery, Class<F> tableEnum) throws ParsingException {
         try {

@@ -29,7 +29,7 @@ class FlatTreeParsingServiceTest {
         final QueryNode<?> queryNode = parsingService.parse("{\"predicates\": []}", Negotiation.class);
 
         final StringBuilder queryBuilder = new StringBuilder();
-        queryNode.generateSQLQuery(queryBuilder);
+        queryNode.appendWhereClause(queryBuilder);
 
         assertEquals(0, queryBuilder.length());
     }
@@ -47,7 +47,7 @@ class FlatTreeParsingServiceTest {
                 "                }", Negotiation.class);
 
         final StringBuilder queryBuilder = new StringBuilder();
-        queryNode.generateSQLQuery(queryBuilder);
+        queryNode.appendWhereClause(queryBuilder);
 
         assertEquals("Currency1!='UAH'", queryBuilder.toString());
     }
@@ -69,7 +69,7 @@ class FlatTreeParsingServiceTest {
                 "                }", Negotiation.class);
 
         final StringBuilder queryBuilder = new StringBuilder();
-        queryNode.generateSQLQuery(queryBuilder);
+        queryNode.appendWhereClause(queryBuilder);
 
         assertEquals("Currency1!='UAH' AND Product='TEST'", queryBuilder.toString());
     }

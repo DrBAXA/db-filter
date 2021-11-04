@@ -23,7 +23,7 @@ public enum Negotiation implements ColumnDescription<NegotiationRow> {
     Time1("TIME1", Long.class, NegotiationRow::getTime1),
     Price1("PRICE1", BigDecimal.class, NegotiationRow::getPrice1);
 
-    Negotiation(String cn, Class<?> fieldType, Function<NegotiationRow, ?> fieldAccessor) {
+    Negotiation(String cn, Class<?> fieldType, Function<NegotiationRow, ? extends Comparable<?>> fieldAccessor) {
         this.columnName = cn;
         this.fieldType = fieldType;
         this.fieldAccessor = fieldAccessor;
@@ -33,10 +33,7 @@ public enum Negotiation implements ColumnDescription<NegotiationRow> {
     private final String columnName;
     @Getter
     private final Class<?> fieldType;
-    private final Function<NegotiationRow, ?> fieldAccessor;
+    @Getter
+    private final Function<NegotiationRow, ? extends Comparable<?>> fieldAccessor;
 
-    @Override
-    public Function<NegotiationRow, ?> getFieldAccessor() {
-        return fieldAccessor;
-    }
 }

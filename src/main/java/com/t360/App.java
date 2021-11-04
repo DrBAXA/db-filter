@@ -20,6 +20,11 @@ public class App {
                 "                    {\n" +
                 "                      \"field\": \"Currency1\",\n" +
                 "                      \"value\": \"UAH\",\n" +
+                "                      \"comparingOperator\": \"=\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                      \"field\": \"Size1\",\n" +
+                "                      \"value\": 1000000000000000000000.2,\n" +
                 "                      \"comparingOperator\": \"<\"\n" +
                 "                    }\n" +
                 "                  ]\n" +

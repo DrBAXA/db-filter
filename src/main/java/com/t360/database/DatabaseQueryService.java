@@ -47,7 +47,7 @@ public class DatabaseQueryService {
     private String getSQL(TableQuery tableQuery, QueryNode<?> filterQuery) {
         StringBuilder queryBuilder = tableQuery.selectAllQuery().append(" WHERE ");
         final int initialLength = queryBuilder.length();
-        filterQuery.generateSQLQuery(queryBuilder);
+        filterQuery.appendWhereClause(queryBuilder);
         if (queryBuilder.length() == initialLength) {
             queryBuilder.delete(initialLength - 7, initialLength);
         }
