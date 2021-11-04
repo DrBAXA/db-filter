@@ -3,7 +3,11 @@ package com.t360.database;
 import com.t360.filtering.core.QueryNode;
 import com.t360.filtering.tables.TableQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.hsqldb.cmdline.SqlFile;
+import org.hsqldb.cmdline.SqlToolError;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +18,16 @@ import java.util.List;
 @Slf4j
 public class DatabaseQueryService {
 
-    private final String connectionURL = "jdbc:hsqldb:file:test.db/";
+    private final String connectionURL = "jdbc:hsqldb:mem:test.db";
 
     public DatabaseQueryService() {
+        try {
+            SqlFile sf = new SqlFile(new File("HSQL_Setup.sql"));
+            sf.setConnection(getConnection());
+            sf.execute();
+        } catch (IOException | SqlToolError | SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String[][] query(TableQuery tableQuery, QueryNode<?> filterQuery) {

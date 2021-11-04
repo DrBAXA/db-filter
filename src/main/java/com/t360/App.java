@@ -30,12 +30,33 @@ public class App {
                 "                  ]\n" +
                 "                }");
 
+        pring(negotiationTableData);
+
+        final String[][] midMatchStrategyData = tableDataController.getMidMatchStrategyData("{\n" +
+                "                  \"predicates\": [\n" +
+                "                    {\n" +
+                "                      \"field\": \"Symbol\",\n" +
+                "                      \"value\": \"TEST\",\n" +
+                "                      \"comparingOperator\": \"=\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                      \"field\": \"Spot_sensitivity_price\",\n" +
+                "                      \"value\": 1000000000000000000000.2,\n" +
+                "                      \"comparingOperator\": \"<\"\n" +
+                "                    }\n" +
+                "                  ]\n" +
+                "                }");
+
+        pring(midMatchStrategyData);
+
+    }
+
+    private static void pring(String[][] negotiationTableData) {
         for (String[] negotiationTableRow : negotiationTableData) {
             for (String column : negotiationTableRow) {
                 System.out.print(column + "\t");
             }
             System.out.println();
         }
-
     }
 }
