@@ -15,6 +15,8 @@ public class FieldInstantiationUtil {
 
     public static final String ARRAY_BEGINNING = "[";
     public static final String ARRAY_ENDING = "]";
+    public static final String ARRAY_OF_VALUES_SPLIT = "\\s*,\\s*";
+    public static final String DOUBLE_QUOTE = "\"";
 
     public static <F extends ColumnDescription<?>> Object parseValue(F field, ComparingOperator operator, String valueString) {
         valueString = valueString.trim();
@@ -31,10 +33,24 @@ public class FieldInstantiationUtil {
         if (valueString.startsWith(ARRAY_BEGINNING)) valueString = valueString.substring(1);
         if (valueString.endsWith(ARRAY_ENDING)) valueString = valueString.substring(0, valueString.length() - 1);
 
-        return Arrays.stream(valueString.split("\\s*,\\s*"))
-                .map(elementString -> parseSingleValue(elementString, fieldType))
-                .collect(Collectors.toCollection(HashSet::new));
+        HashSet<Object> objects = new HashSet<>();
+        for (String elementString : valueString.split(ARRAY_OF_VALUES_SPLIT)) {
+            if (fieldType.equals(String.class)) {
+                objects.add(trimQuotes(elementString));
+                continue;
+            }
+            Object o = parseSingleValue(elementString, fieldType);
+            objects.add(o);
+        }
+        return objects;
 
+    }
+
+    private static String trimQuotes(String string) {
+        if (string.length() >= 2 && string.startsWith(DOUBLE_QUOTE) && string.endsWith(DOUBLE_QUOTE)) {
+            return string.substring(1, string.length() - 1);
+        }
+        return string;
     }
 
     private static Object parseSingleValue(String valueString, Class<?> fieldType) {
@@ -45,7 +61,7 @@ public class FieldInstantiationUtil {
             // special case for boolean
             if (fieldType.equals(Boolean.class)) return handleBoolean(valueString.trim());
 
-            return fieldType.getConstructor(new Class[] {String.class }).newInstance(valueString);
+            return fieldType.getConstructor(new Class[]{String.class}).newInstance(valueString);
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException("Unable to parse string into " + fieldType + ". Class is not supported", e);

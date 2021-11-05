@@ -112,5 +112,8 @@ class FieldInstantiationUtilTest {
         doReturn(Integer.class).when(columnDescription).getFieldType();
         assertEquals(new HashSet<>(Arrays.asList(10, 20 ,30)), FieldInstantiationUtil.parseValue(columnDescription, IN, "[10, 20, 30]"));
         assertEquals(new HashSet<>(Arrays.asList(10, 20 ,30)), FieldInstantiationUtil.parseValue(columnDescription, IN, "10, 20, 30"));
+
+        doReturn(String.class).when(columnDescription).getFieldType();
+        assertEquals(new HashSet<>(Arrays.asList("10", "20" ,"30")), FieldInstantiationUtil.parseValue(columnDescription, IN, "[\"10\", \"20\", \"30\"]"));
     }
 }
