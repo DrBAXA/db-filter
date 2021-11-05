@@ -1,0 +1,20 @@
+{
+  "expression": "A & (B | C)",
+  "predicates": {
+    "A": {
+      "field": "Size1",
+      "value": 100,
+      "comparingOperator": ">="
+    },
+    "B": {
+      "field": "Size2",
+      "value": 10000000,
+      "comparingOperator": "<"
+    },
+    "C": {
+      "field": "Currency1",
+      "value": ["UAH", "EUR"],
+      "comparingOperator": "IN"
+    }
+  }
+}

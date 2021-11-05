@@ -40,7 +40,9 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
     public void appendWhereClause(StringBuilder queryBuilder) {
         queryBuilder
                 .append(field.getColumnName())
-                .append(operator.getSqlSign());
+                .append(' ')
+                .append(operator.getSqlSign())
+                .append(' ');
         appendValue(queryBuilder);
     }
 

@@ -3,8 +3,7 @@ package com.t360;
 import com.t360.database.DatabaseManager;
 import com.t360.filtering.core.PredicateValueDescriptor;
 import com.t360.filtering.core.QueryNode;
-import com.t360.filtering.core.parsing.FlatTreeParsingService;
-import com.t360.filtering.core.parsing.ParsingException;
+import com.t360.filtering.core.parsing.QueryParser;
 import com.t360.filtering.core.parsing.QueryTreeParsingService;
 import com.t360.filtering.tables.ColumnDescription;
 import com.t360.filtering.tables.MidMatchStrategy;
@@ -20,66 +19,19 @@ import java.util.function.Consumer;
 
 public class App {
 
-    public static void main(String[] args) throws ParsingException, SQLException {
-        String json = "{\"predicates\": [{\"field\": \"Currency1\", \"value\": \"UAH\", \"comparingOperator\": \"=\"}, {\"field\": \"Size1\", \"value\": 1000000000000000000000.2, \"comparingOperator\": \"<\"}]}";
+    public static void main(String[] args) throws SQLException {
+        String json = "{\"expression\":\"A&B\",\"predicates\":{\"A\":{\"field\":\"Currency1\",\"value\":\"UAH\",\"comparingOperator\":\"=\"},\"B\":{\"field\":\"Size1\",\"value\":1000000000000000000000.2,\"comparingOperator\":\"<\"}}}";
         executeJsonQuery(json, Negotiation.class);
 
-        String json2 = "{\"predicates\": [{\"field\": \"Symbol\", \"value\": \"AA\", \"comparingOperator\": \"=\"}]}";
+        String json2 = "{\"expression\":\"A\",\"predicates\":{\"A\":{\"field\":\"Symbol\",\"value\":\"AA\",\"comparingOperator\":\"=\"}}}";
         executeJsonQuery(json2, MidMatchStrategy.class);
+
+        String json3 = "{\"expression\":\"A&(B|C)\",\"predicates\":{\"A\":{\"field\":\"Size1\",\"value\":100,\"comparingOperator\":\">=\"},\"B\":{\"field\":\"Size2\",\"value\":10000000,\"comparingOperator\":\"<\"},\"C\":{\"field\":\"Currency1\",\"value\":[\"UAH\",\"EUR\"],\"comparingOperator\":\"IN\"}}}";
+        executeJsonQuery(json3, Negotiation.class);
     }
 
-    private static void test1() throws ParsingException {
-        QueryTreeParsingService parsingService = new FlatTreeParsingService();
-        DatabaseManager databaseQueryService = new DatabaseManager();
-
-        TableDataController tableDataController = new TableDataController(parsingService, databaseQueryService);
-
-        final String[][] negotiationTableData = tableDataController.getNegotiationTableData("{\n" +
-                "                  \"predicates\": [\n" +
-                "                    {\n" +
-                "                      \"field\": \"Currency1\",\n" +
-                "                      \"value\": \"UAH\",\n" +
-                "                      \"comparingOperator\": \"=\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                      \"field\": \"Size1\",\n" +
-                "                      \"value\": 1000000000000000000000.2,\n" +
-                "                      \"comparingOperator\": \"<\"\n" +
-                "                    }\n" +
-                "                  ]\n" +
-                "                }");
-
-        print(negotiationTableData);
-
-        final String[][] midMatchStrategyData = tableDataController.getMidMatchStrategyData("{\n" +
-                "                  \"predicates\": [\n" +
-                "                    {\n" +
-                "                      \"field\": \"Symbol\",\n" +
-                "                      \"value\": \"TEST\",\n" +
-                "                      \"comparingOperator\": \"=\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                      \"field\": \"Spot_sensitivity_price\",\n" +
-                "                      \"value\": 1000000000000000000000.2,\n" +
-                "                      \"comparingOperator\": \"<\"\n" +
-                "                    }\n" +
-                "                  ]\n" +
-                "                }");
-
-        print(midMatchStrategyData);
-    }
-
-    private static void print(String[][] negotiationTableData) {
-        for (String[] negotiationTableRow : negotiationTableData) {
-            for (String column : negotiationTableRow) {
-                System.out.print(column + "\t");
-            }
-            System.out.println();
-        }
-    }
-
-    private static <T, F extends Enum<F> & ColumnDescription<T>> void executeJsonQuery(String jsonInput, Class<F> tableEnum) throws ParsingException, SQLException {
-        QueryTreeParsingService parsingService = new FlatTreeParsingService();
+    private static <T, F extends Enum<F> & ColumnDescription<T>> void executeJsonQuery(String jsonInput, Class<F> tableEnum) throws SQLException {
+        QueryTreeParsingService parsingService = new QueryParser();
         QueryNode<T> rootNode = parsingService.parse(jsonInput, tableEnum);
         StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ")
                 .append(resolveTableName(tableEnum))

@@ -1,14 +1,22 @@
 package com.t360.filtering.core.parsing;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.t360.filtering.core.parsing.JsonPredicate;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-@JsonSubTypes({
-        @JsonSubTypes.Type(Tree.class),
-        @JsonSubTypes.Type(JsonPredicate.class)
-})
-public interface JsonQuery {
+import java.util.Map;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class JsonQuery {
+
+    @JsonProperty
+    private String expression;
+
+    @JsonProperty
+    private Map<String, JsonPredicate> predicates;
 
 }
