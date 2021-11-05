@@ -1,7 +1,7 @@
 package com.t360;
 
 import com.t360.filtering.core.QueryNode;
-import com.t360.database.DatabaseQueryService;
+import com.t360.database.DatabaseManager;
 import com.t360.filtering.core.parsing.ParsingException;
 import com.t360.filtering.core.parsing.QueryTreeParsingService;
 import com.t360.filtering.tables.MidMatchStrategy;
@@ -12,12 +12,12 @@ import com.t360.filtering.tables.NegotiationRow;
 public class TableDataController {
 
     private final QueryTreeParsingService queryTreeParsingService;
-    private final DatabaseQueryService databaseQueryService;
+    private final DatabaseManager databaseQueryService;
 
     public TableDataController(QueryTreeParsingService queryTreeParsingService,
-                               DatabaseQueryService databaseQueryService) {
+                               DatabaseManager databaseManager) {
         this.queryTreeParsingService = queryTreeParsingService;
-        this.databaseQueryService = databaseQueryService;
+        this.databaseQueryService = databaseManager;
     }
 
     public String[][] getNegotiationTableData(String jsonQuery) throws ParsingException {

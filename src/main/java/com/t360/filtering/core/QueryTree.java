@@ -1,28 +1,22 @@
 package com.t360.filtering.core;
 
-import lombok.NonNull;
 import lombok.Value;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Class represents a tree node of an expression tree
- * It can have 0  or more subtrees/leaves all combined by an {@link Operator}
+ * It can have 0 or more subtrees/leaves all combined by and {@link LogicalOperator}
+ *
  * @param <T> Type of entity representing a table row
  */
 @Value
 public class QueryTree<T> implements QueryNode<T> {
 
-    Operator operator;
-
+    LogicalOperator operator;
     List<QueryNode<T>> predicates;
-
-    public QueryTree(@NonNull Operator operator, @NonNull List<QueryNode<T>> predicates) {
-        this.operator = operator;
-        this.predicates = new ArrayList<>(predicates);
-    }
 
     /**
      * Appends an SQL predicate to provided {@link StringBuilder}
@@ -48,6 +42,22 @@ public class QueryTree<T> implements QueryNode<T> {
     }
 
     /**
+     * Return current node representation in SQL where clause perspective
+     *
+     * @return {@link String} as sql where clause
+     */
+    @Override
+    public String asSqlWhereClause() {
+        return predicates.stream().map(QueryNode::asSqlWhereClause)
+                .collect(Collectors.joining(String.format(" %s ", operator.name()), "(", ")"));
+    }
+
+    @Override
+    public List<PredicateValueDescriptor> collectPredicates() {
+        return predicates.stream().map(QueryNode::collectPredicates).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    /**
      * Prepares a {@link Predicate} that can test if an entity satisfies a query
      * that is represented by {@code this} object.
      *
@@ -56,9 +66,12 @@ public class QueryTree<T> implements QueryNode<T> {
     @Override
     public Predicate<T> generateJavaPredicate() {
         switch (operator) {
-            case AND: return value -> predicates.stream().map(QueryNode::generateJavaPredicate).allMatch(p -> p.test(value));
-            case OR: return value -> predicates.stream().map(QueryNode::generateJavaPredicate).anyMatch(p -> p.test(value));
-            default: throw new IllegalStateException("New Operator enum value added"); // should never happen
+            case AND:
+                return value -> predicates.stream().map(QueryNode::generateJavaPredicate).allMatch(p -> p.test(value));
+            case OR:
+                return value -> predicates.stream().map(QueryNode::generateJavaPredicate).anyMatch(p -> p.test(value));
+            default:
+                throw new IllegalStateException("New Operator enum value added"); // should never happen
         }
     }
 

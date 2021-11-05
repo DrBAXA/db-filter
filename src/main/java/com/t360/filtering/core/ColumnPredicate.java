@@ -3,19 +3,19 @@ package com.t360.filtering.core;
 import com.t360.filtering.tables.ColumnDescription;
 import lombok.Value;
 
-
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
  * Represents a single predicate on a column value
+ *
  * @param <T> type of entity
  * @param <F> type of table describing enum
  */
 @Value
-public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T> {
-
-    private static final char APOSTROPHE = '\'';
+public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T>, PredicateValueDescriptor {
 
     F field;
     Object value;
@@ -27,11 +27,6 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
         this.comparingOperator = operator;
     }
 
-    /*
-     * TODO convert to  prepared statement and placeholder
-     *  SQL dialects ???
-     *  Types probably needed for escaping or switching to prepared statements with placeholders
-     */
     @Override
     public void appendWhereClause(StringBuilder queryBuilder) {
         queryBuilder
@@ -39,7 +34,6 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
                 .append(comparingOperator.getSqlSign());
         appendValue(queryBuilder);
     }
-
 
     private void appendValue(StringBuilder queryBuilder) {
         if (value instanceof CharSequence) {
@@ -52,6 +46,17 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
     @Override
     public Predicate<T> generateJavaPredicate() {
         return createPredicate(field, value, comparingOperator);
+    }
+
+    @Override
+    public String asSqlWhereClause() {
+        // todo support IN, is null, is not null
+        return String.format("%s %s ?", field.getColumnName(), comparingOperator.getSqlSign());
+    }
+
+    @Override
+    public List<PredicateValueDescriptor> collectPredicates() {
+        return Collections.singletonList(this);
     }
 
     private Predicate<T> createPredicate(F tableEnum, Object value, ComparingOperator operator) {
@@ -78,7 +83,7 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
             if ((fieldValue.getClass().isInstance(value))) {
                 // we already have checked that value is instance of the class of fieldValue
                 // noinspection unchecked,rawtypes
-                int c = ((Comparable)fieldValue).compareTo(value);
+                int c = ((Comparable) fieldValue).compareTo(value);
                 return examineComparison(operator, c);
             }
 
@@ -118,4 +123,8 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
         }
     }
 
+    @Override
+    public Class<?> getFieldType() {
+        return field.getFieldType();
+    }
 }

@@ -1,5 +1,5 @@
 package com.t360.filtering.core;
 
-public enum Operator {
+public enum LogicalOperator {
     AND, OR
 }
