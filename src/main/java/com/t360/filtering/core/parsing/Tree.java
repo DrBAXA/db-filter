@@ -1,7 +1,7 @@
 package com.t360.filtering.core.parsing;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.t360.filtering.core.Operator;
+import com.t360.filtering.core.LogicalOperator;
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 public final class Tree implements JsonQuery {
 
     @JsonProperty
-    Operator operator = Operator.AND;
+    LogicalOperator operator = LogicalOperator.AND;
 
     @JsonProperty
     List<JsonQuery> predicates;

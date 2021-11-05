@@ -1,5 +1,6 @@
 package com.t360.filtering.core;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -15,10 +16,14 @@ public interface QueryNode<T> {
 
     /**
      * Creates predicate that can be applied to Java representation of the table row
+     *
      * @return predicate that tests objects for corresponding of this Query
      */
     Predicate<T> generateJavaPredicate();
 
+    String asSqlWhereClause();
+
+    List<PredicateValueDescriptor> collectPredicates();
 
 }
 

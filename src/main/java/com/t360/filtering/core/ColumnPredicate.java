@@ -3,43 +3,46 @@ package com.t360.filtering.core;
 import com.t360.filtering.tables.ColumnDescription;
 import lombok.Value;
 
-
-import java.util.Collection;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
  * Represents a single predicate on a column value
+ *
  * @param <T> type of entity
  * @param <F> type of table describing enum
  */
 @Value
-public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T> {
+public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T>, PredicateValueDescriptor {
 
-    private static final char APOSTROPHE = '\'';
+    private static final Set<ComparingOperator> BINARY_OPERATORS = new HashSet<>();
+
+    static {
+        BINARY_OPERATORS.add(ComparingOperator.EQUAL);
+        BINARY_OPERATORS.add(ComparingOperator.LESS);
+        BINARY_OPERATORS.add(ComparingOperator.LESS_OR_EQUAL);
+        BINARY_OPERATORS.add(ComparingOperator.GREATER);
+        BINARY_OPERATORS.add(ComparingOperator.GREATER_OR_EQUAL);
+        BINARY_OPERATORS.add(ComparingOperator.NOT_EQUAL);
+    }
 
     F field;
     Object value;
-    ComparingOperator comparingOperator;
+    ComparingOperator operator;
 
     public ColumnPredicate(F field, String value, ComparingOperator operator) {
         this.field = field;
         this.value = FieldInstantiationUtil.parseValue(field, operator, value);
-        this.comparingOperator = operator;
+        this.operator = operator;
     }
 
-    /*
-     * TODO convert to  prepared statement and placeholder
-     *  SQL dialects ???
-     *  Types probably needed for escaping or switching to prepared statements with placeholders
-     */
     @Override
     public void appendWhereClause(StringBuilder queryBuilder) {
         queryBuilder
                 .append(field.getColumnName())
-                .append(comparingOperator.getSqlSign());
+                .append(operator.getSqlSign());
         appendValue(queryBuilder);
     }
-
 
     private void appendValue(StringBuilder queryBuilder) {
         if (value instanceof CharSequence) {
@@ -51,7 +54,25 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
 
     @Override
     public Predicate<T> generateJavaPredicate() {
-        return createPredicate(field, value, comparingOperator);
+        return createPredicate(field, value, operator);
+    }
+
+    @Override
+    public String asSqlWhereClause() {
+        if (BINARY_OPERATORS.contains(operator)) {
+            return String.format("%s %s ?", field.getColumnName(), operator.getSqlSign());
+        } else {
+            if (operator == ComparingOperator.IN || operator == ComparingOperator.NOT_IN) {
+                return String.format("%s %s (?)", field.getColumnName(), operator.getSqlSign());
+            } else {
+                return field.getColumnName() + operator.getSqlSign();
+            }
+        }
+    }
+
+    @Override
+    public List<PredicateValueDescriptor> collectPredicates() {
+        return Collections.singletonList(this);
     }
 
     private Predicate<T> createPredicate(F tableEnum, Object value, ComparingOperator operator) {
@@ -78,7 +99,7 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
             if ((fieldValue.getClass().isInstance(value))) {
                 // we already have checked that value is instance of the class of fieldValue
                 // noinspection unchecked,rawtypes
-                int c = ((Comparable)fieldValue).compareTo(value);
+                int c = ((Comparable) fieldValue).compareTo(value);
                 return examineComparison(operator, c);
             }
 
@@ -118,4 +139,8 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
         }
     }
 
+    @Override
+    public Class<?> getFieldType() {
+        return field.getFieldType();
+    }
 }
