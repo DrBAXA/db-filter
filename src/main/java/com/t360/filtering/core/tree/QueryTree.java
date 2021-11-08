@@ -2,7 +2,6 @@ package com.t360.filtering.core.tree;
 
 import com.t360.filtering.core.LogicalOperator;
 import com.t360.filtering.core.PredicateValueDescriptor;
-import com.t360.filtering.core.QueryNode;
 import lombok.Value;
 
 import java.util.ArrayList;

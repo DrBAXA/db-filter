@@ -6,13 +6,13 @@ import com.t360.filtering.core.tree.TreeNode;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class QueryTreeTest {
 

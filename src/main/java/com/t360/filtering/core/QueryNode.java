@@ -3,8 +3,6 @@ package com.t360.filtering.core;
 import com.t360.filtering.core.tree.TreeNode;
 
 import java.sql.PreparedStatement;
-import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * @param <T> type of Java representation of the table
