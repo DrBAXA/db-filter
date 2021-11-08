@@ -21,13 +21,13 @@ import java.util.function.Consumer;
 public class App {
 
     public static void main(String[] args) throws SQLException {
-        String json = "{\"expression\":\"A&B\",\"predicates\":{\"A\":{\"field\":\"Currency1\",\"value\":\"UAH\",\"comparingOperator\":\"=\"},\"B\":{\"field\":\"Size1\",\"value\":1000000000000000000000.2,\"comparingOperator\":\"<\"}}}";
+        String json = "{\"expression\":\"A&B\",\"predicates\":{\"A\":{\"field\":\"Currency1\",\"value\":\"UAH\",\"operator\":\"=\"},\"B\":{\"field\":\"Size1\",\"value\":1000000000000000000000.2,\"operator\":\"<\"}}}";
         executeJsonQuery(json, Negotiation.class);
 
-        String json2 = "{\"expression\":\"A\",\"predicates\":{\"A\":{\"field\":\"Symbol\",\"value\":\"AA\",\"comparingOperator\":\"=\"}}}";
+        String json2 = "{\"expression\":\"A\",\"predicates\":{\"A\":{\"field\":\"Symbol\",\"value\":\"AA\",\"operator\":\"=\"}}}";
         executeJsonQuery(json2, MidMatchStrategy.class);
 
-        String json3 = "{\"expression\":\"A&(B|C)\",\"predicates\":{\"A\":{\"field\":\"Size1\",\"value\":100,\"comparingOperator\":\">=\"},\"B\":{\"field\":\"Size2\",\"value\":10000000,\"comparingOperator\":\"<\"},\"C\":{\"field\":\"Currency1\",\"value\":[\"UAH\",\"EUR\"],\"comparingOperator\":\"IN\"}}}";
+        String json3 = "{\"expression\":\"A&(B|C)\",\"predicates\":{\"A\":{\"field\":\"Size1\",\"value\":100,\"operator\":\">=\"},\"B\":{\"field\":\"Size2\",\"value\":10000000,\"operator\":\"<\"},\"C\":{\"field\":\"Currency1\",\"value\":[\"UAH\",\"EUR\"],\"operator\":\"IN\"}}}";
         executeJsonQuery(json3, Negotiation.class);
     }
 

@@ -52,7 +52,7 @@ public class QueryParser implements QueryTreeParsingService {
     private <T, F extends Enum<F> & ColumnDescription<T>> ColumnPredicate<T, F> convertPredicate(JsonPredicate jsonPredicate, Class<F> tableEnum) {
         final String columnName = jsonPredicate.getField();
         F columnDescriptor = Enum.valueOf(tableEnum, columnName);
-        return new ColumnPredicate<>(columnDescriptor, jsonPredicate.getValue(), jsonPredicate.getComparingOperator());
+        return new ColumnPredicate<>(columnDescriptor, jsonPredicate.getValue(), jsonPredicate.getOperator());
     }
 
     private JsonQuery parseJson(String jsonQuery) {

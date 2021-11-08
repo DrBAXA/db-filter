@@ -18,6 +18,6 @@ public final class JsonPredicate {
     @JsonDeserialize(using = DumbStringDeserializer.class)
     String value;
     @JsonProperty
-    ComparingOperator comparingOperator;
+    ComparingOperator operator;
 
 }
