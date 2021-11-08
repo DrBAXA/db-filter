@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ParsingServiceTest {
+class QueryParserTest {
 
     private QueryParser parsingService;
 
@@ -57,6 +57,27 @@ class ParsingServiceTest {
 
 
         assertEquals("(SIZE1 >= ? AND (SIZE2 < ? OR CURRENCY1 IN (?, ?)))", queryNode.asSqlWhereClause());
+    }
+
+    @Test
+    void parse_wrong() {
+        final String missingPredicateQuery = "{\n" +
+                "  \"expression\": \"A & (B | C)\",\n" +
+                "  \"predicates\": {\n" +
+                "    \"A\": {\n" +
+                "      \"field\": \"Size1\",\n" +
+                "      \"value\": 100,\n" +
+                "      \"operator\": \">=\"\n" +
+                "    },\n" +
+                "    \"B\": {\n" +
+                "      \"field\": \"Size2\",\n" +
+                "      \"value\": 10000000,\n" +
+                "      \"operator\": \"<\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        assertThrows(IllegalArgumentException.class, () -> parsingService.parse(missingPredicateQuery, Negotiation.class));
     }
 
 }
