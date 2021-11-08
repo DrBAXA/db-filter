@@ -43,5 +43,21 @@ CREATE TABLE MID_MATCH_STRATEGY
 INSERT INTO MID_MATCH_STRATEGY(ID, NEGOTIATION_ID, SYMBOL, STRATEGY_TYPE, STRATEGY_SOURCE,
                                NEAR_LEG_TENOR, FAR_LEG_TENOR, SIDE, OWNER, SPOT_SENSITIVITY_PRICE,
                                IS_PARTIAL_FILL_ALLOWED, IS_BASE_NOTIONAL, IS_MARKET_MAKER_AGREEMENT)
-VALUES (1, 1, 'AA', 1, 1, 'SMTHNG', 'SMSELSE', 1, 1, 10000.2, 1, 1, 1),
-       (2, 2, 'BB', 1, 1, 'SMTHNG2', 'SMSELSE2', 1, 1, 100000.3, 1, 1, 0);
+VALUES (1, 1, 'AA', 100, 1, 'TEST_100', 'SMSELSE', 1, 1, 110.27, 1, 1, 1),
+       (2, 2, 'AA', 100, 2, 'TEST_101', 'SMSELSE2', 1, 1, 98.14, 1, 0, 0),
+       (3, 2, 'AA', 200, 3, 'TEST_102', 'SMSELSE2', 1, 1, 557.48, 0, 1, 0),
+
+       (4, 2, 'BB', 100, 1, 'TEST_103', 'SMSELSE2', 1, 1, 53.81, 1, 1, 0),
+       (5, 2, 'BB', 200, 2, 'TEST_104', 'SMSELSE2', 1, 1, 127.17, 0, 1, 1),
+       (6, 2, 'BB', 300, 3, 'TEST_105', 'SMSELSE2', 1, 1, 76.34, 1, 0, 0),
+
+       (7, 2, 'CC', 100, 1, 'TEST_106', 'SMSELSE2', 1, 1, 96.23, 0, 1, 0),
+       (8, 2, 'CC', 200, 2, 'TEST_107', 'SMSELSE2', 1, 1, 108.69, 1, 1, 0),
+       (9, 2, 'CC', 300, 3, 'TEST_108', 'SMSELSE2', 1, 1, 88.93, 1, 0, 1),
+
+       (10, 2, 'DD', 200, 1, 'TEST_109', 'SMSELSE2', 1, 1, 134.27, 0, 0, 0),
+       (11, 2, 'DD', 400, 2, 'TEST_110', 'SMSELSE2', 1, 1, 147.21, 0, 1, 0),
+       (12, 2, 'DD', 600, 3, 'TEST_111', 'SMSELSE2', 1, 1, 82.46, 0, 1, 1),
+       (13, 2, 'DD', 800, 4, 'TEST_112', 'SMSELSE2', 1, 1, 88.74, 1, 0, 0),
+       (14, 2, 'DD', 1000, 5, 'TEST_113', 'SMSELSE2', 1, 1, 92.94, 1, 1, 1),
+       (15, 2, 'DD', 1200, 6, 'TEST_114', 'SMSELSE2', 1, 1, 119.61, 1, 1, 0);
