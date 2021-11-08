@@ -18,8 +18,8 @@ public class FieldInstantiationUtil {
     public static final String DOUBLE_QUOTE = "\"";
 
     public static <F extends ColumnDescription<?>> Object parseValue(F field, ComparingOperator operator, String valueString) {
+        if (valueString == null || valueString.isEmpty()) return null;
         valueString = valueString.trim();
-        if (valueString.isEmpty()) return null;
 
         Class<?> fieldType = field.getFieldType();
         if (operator == ComparingOperator.IN || operator == ComparingOperator.NOT_IN) {

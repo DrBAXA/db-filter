@@ -74,7 +74,7 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
                 }
                 throw new IllegalStateException("");
             } else {
-                return field.getColumnName() + operator.getSqlSign();
+                return field.getColumnName() + " " + operator.getSqlSign();
             }
         }
     }
@@ -86,7 +86,7 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
 
     @Override
     public List<PredicateValueDescriptor> collectPredicates() {
-        return Collections.singletonList(this);
+        return value == null ? Collections.emptyList() : Collections.singletonList(this);
     }
 
     private Predicate<T> createPredicate(F tableEnum, Object value, ComparingOperator operator) {
