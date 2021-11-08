@@ -6,6 +6,7 @@ import com.t360.filtering.tables.NegotiationRow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,12 +36,17 @@ class QueryParserTest {
     @Test
     void parse_severalPredicates() {
         final QueryNode<NegotiationRow> queryNode = parsingService.parse("{\n" +
-                "  \"expression\": \"A & (B | C)\",\n" +
+                "  \"expression\": \"(A | D) & (B | C)\",\n" +
                 "  \"predicates\": {\n" +
                 "    \"A\": {\n" +
                 "      \"field\": \"Size1\",\n" +
                 "      \"value\": 100,\n" +
                 "      \"operator\": \">=\"\n" +
+                "    },\n" +
+                "    \"D\": {\n" +
+                "      \"field\": \"Currency1\",\n" +
+                "      \"value\": \"CAD\",\n" +
+                "      \"operator\": \"=\"\n" +
                 "    },\n" +
                 "    \"B\": {\n" +
                 "      \"field\": \"Size2\",\n" +
@@ -56,7 +62,32 @@ class QueryParserTest {
                 "}", Negotiation.class);
 
 
-        assertEquals("(SIZE1 >= ? AND (SIZE2 < ? OR CURRENCY1 IN (?, ?)))", queryNode.asSqlWhereClause());
+        assertEquals("((SIZE1 >= ? OR CURRENCY1 = ?) AND (SIZE2 < ? OR CURRENCY1 IN (?, ?)))", queryNode.asSqlWhereClause());
+
+        final NegotiationRow negotiationEUR = new NegotiationRow();
+        negotiationEUR.setCurrency1("EUR");
+        negotiationEUR.setSize1(BigDecimal.valueOf(10_000_000));
+        negotiationEUR.setSize2(BigDecimal.valueOf(10_000_000));
+
+        final NegotiationRow negotiationUAH = new NegotiationRow();
+        negotiationUAH.setCurrency1("UAH");
+        negotiationUAH.setSize1(BigDecimal.valueOf(10_000));
+        negotiationUAH.setSize2(BigDecimal.valueOf(10_000));
+
+        final NegotiationRow negotiationCAD = new NegotiationRow();
+        negotiationCAD.setCurrency1("CAD");
+        negotiationCAD.setSize1(BigDecimal.valueOf(1_000));
+        negotiationCAD.setSize2(BigDecimal.valueOf(1_000_000));
+
+        final NegotiationRow negotiationUSD = new NegotiationRow();
+        negotiationUSD.setCurrency1("USD");
+        negotiationUSD.setSize1(BigDecimal.valueOf(10));
+        negotiationUSD.setSize2(BigDecimal.valueOf(100_000_000));
+
+        assertTrue(queryNode.generateJavaPredicate().test(negotiationUAH));
+        assertTrue(queryNode.generateJavaPredicate().test(negotiationEUR));
+        assertTrue(queryNode.generateJavaPredicate().test(negotiationCAD));
+        assertFalse(queryNode.generateJavaPredicate().test(negotiationUSD));
     }
 
     @Test
