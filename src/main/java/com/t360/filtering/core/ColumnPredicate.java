@@ -5,6 +5,7 @@ import lombok.Value;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Represents a single predicate on a column value
@@ -65,7 +66,12 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
             return String.format("%s %s ?", field.getColumnName(), operator.getSqlSign());
         } else {
             if (operator == ComparingOperator.IN || operator == ComparingOperator.NOT_IN) {
-                return String.format("%s %s (?)", field.getColumnName(), operator.getSqlSign());
+                if (value instanceof Collection) {
+                    String questionMarks = ((Collection<?>) value).stream().map(ignore -> "?")
+                            .collect(Collectors.joining(", ", "(", ")"));
+                    return field.getColumnName() + " " + operator.getSqlSign() + " " + questionMarks;
+                }
+                throw new IllegalStateException("");
             } else {
                 return field.getColumnName() + operator.getSqlSign();
             }

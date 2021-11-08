@@ -3,10 +3,8 @@ package com.t360.filtering.core;
 import com.t360.filtering.tables.ColumnDescription;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 /*
  * Not sure if this will be needed and how parsing are done

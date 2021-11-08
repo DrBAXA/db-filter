@@ -14,6 +14,7 @@ import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -45,21 +46,35 @@ public class App {
                 int index = 1;
                 List<PredicateValueDescriptor> descriptors = rootNode.collectPredicates();
                 for (PredicateValueDescriptor valHolder : descriptors) {
-                    if (valHolder.getFieldType().equals(BigDecimal.class)) {
+                    Class<?> valueClass = valHolder.getValue().getClass();
+
+                    if (valueClass.equals(BigDecimal.class)) {
                         ps.setBigDecimal(index++, (BigDecimal) valHolder.getValue());
-                    } else if (valHolder.getFieldType().equals(String.class)) {
+                    } else if (valueClass.equals(String.class)) {
                         ps.setString(index++, (String) valHolder.getValue());
-                    } else if (valHolder.getFieldType().equals(Boolean.class)) {
+                    } else if (valueClass.equals(Boolean.class)) {
                         ps.setBoolean(index++, (Boolean) valHolder.getValue());
                     } else if (valHolder.getValue() instanceof Collection) {
-                        Object[] array = ((Collection<?>) valHolder.getValue()).toArray();
-                        String typeName = resolveJdbcType(array[0]);
-                        ps.setArray(index++, ps.getConnection().createArrayOf(typeName, array));
+                        // todo check if array works on other jdbc vendor
+//                        Object[] array = ((Collection<?>) valHolder.getValue()).toArray();
+//                        String typeName = resolveJdbcType(array[0]);
+//                        Array sqlArray = ps.getConnection().createArrayOf(typeName, array);
+//                        ps.setArray(index++, sqlArray);
+                        Iterator<?> it = ((Collection<?>) valHolder.getValue()).iterator();
+                        while (it.hasNext()) {
+                            if (valHolder.getFieldType().equals(BigDecimal.class)) {
+                                ps.setBigDecimal(index++, (BigDecimal) it.next());
+                            } else if (valHolder.getFieldType().equals(String.class)) {
+                                ps.setString(index++, (String) it.next());
+                            } else if (valHolder.getFieldType().equals(Boolean.class)) {
+                                ps.setBoolean(index++, (Boolean) it.next());
+                            }
+                        }
                     }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                throw new IllegalStateException("Cant correctly configure prepare statement: " + e.getSQLState());
+                throw new IllegalStateException("Cant correctly configure prepare statement: SQL State " + e.getSQLState());
             }
         };
         List<String> result = DatabaseManager.execute(sqlQuery.toString(), applyFunction);
