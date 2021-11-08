@@ -33,10 +33,6 @@ public class FieldInstantiationUtil {
 
         HashSet<Object> objects = new HashSet<>();
         for (String elementString : valueString.split(ARRAY_OF_VALUES_SPLIT)) {
-            if (fieldType.equals(String.class)) {
-                objects.add(trimQuotes(elementString));
-                continue;
-            }
             Object o = parseSingleValue(elementString, fieldType);
             objects.add(o);
         }
@@ -53,6 +49,7 @@ public class FieldInstantiationUtil {
 
     private static Object parseSingleValue(String valueString, Class<?> fieldType) {
         try {
+            if (fieldType.equals(String.class)) return trimQuotes(valueString);
 
             if (fieldType.isPrimitive()) fieldType = getWrapperClass(fieldType);
 
