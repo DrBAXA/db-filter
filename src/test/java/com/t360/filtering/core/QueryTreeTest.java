@@ -1,6 +1,8 @@
 package com.t360.filtering.core;
 
 import com.t360.external.entities.NegotiationRow;
+import com.t360.filtering.core.tree.QueryTree;
+import com.t360.filtering.core.tree.TreeNode;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -14,12 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QueryTreeTest {
 
-    private final QueryNode<NegotiationRow> currencyUAH = new QueryNode<NegotiationRow>() {
-        @Override
-        public void appendWhereClause(StringBuilder queryBuilder) {
-            queryBuilder.append("Currency1='UAH'");
-        }
-
+    private final TreeNode<NegotiationRow> currencyUAH = new TreeNode<NegotiationRow>() {
         @Override
         public Predicate<NegotiationRow> generateJavaPredicate() {
             return v -> v != null && v.getCurrency1() != null && v.getCurrency1().equals("UAH");
@@ -31,22 +28,12 @@ class QueryTreeTest {
         }
 
         @Override
-        public void fillPreparedStatement(PreparedStatement preparedStatement) {
-
-        }
-
-        @Override
         public List<PredicateValueDescriptor> collectPredicates() {
             return null;
         }
     };
 
-    private final QueryNode<NegotiationRow> currencyEUR = new QueryNode<NegotiationRow>() {
-        @Override
-        public void appendWhereClause(StringBuilder queryBuilder) {
-            queryBuilder.append("Currency1='EUR'");
-        }
-
+    private final TreeNode<NegotiationRow> currencyEUR = new TreeNode<NegotiationRow>() {
         @Override
         public Predicate<NegotiationRow> generateJavaPredicate() {
             return v -> v != null && v.getCurrency1() != null && v.getCurrency1().equals("EUR");
@@ -58,22 +45,12 @@ class QueryTreeTest {
         }
 
         @Override
-        public void fillPreparedStatement(PreparedStatement preparedStatement) {
-
-        }
-
-        @Override
         public List<PredicateValueDescriptor> collectPredicates() {
             return null;
         }
     };
 
-    private final QueryNode<NegotiationRow> sizeLessThanMillion = new QueryNode<NegotiationRow>() {
-        @Override
-        public void appendWhereClause(StringBuilder queryBuilder) {
-            queryBuilder.append("Size1<1000000");
-        }
-
+    private final TreeNode<NegotiationRow> sizeLessThanMillion = new TreeNode<NegotiationRow>() {
         @Override
         public Predicate<NegotiationRow> generateJavaPredicate() {
             return v -> v != null && v.getSize1() != null && v.getSize1().compareTo(BigDecimal.valueOf(1000000L)) < 0;
@@ -82,11 +59,6 @@ class QueryTreeTest {
         @Override
         public String asSqlWhereClause() {
             return null;
-        }
-
-        @Override
-        public void fillPreparedStatement(PreparedStatement preparedStatement) {
-
         }
 
         @Override
@@ -109,13 +81,6 @@ class QueryTreeTest {
 
         assertTrue(queryTree.generateJavaPredicate().test(negotiationUAH));
         assertTrue(queryTree.generateJavaPredicate().test(negotiationEUR));
-
-
-        final StringBuilder queryBuilder = new StringBuilder();
-        queryTree.appendWhereClause(queryBuilder);
-
-        // nothing was appended
-        assertEquals(0, queryBuilder.length());
     }
 
     @Test
@@ -135,11 +100,6 @@ class QueryTreeTest {
 
         assertTrue(queryTree.generateJavaPredicate().test(negotiationUAH));
         assertFalse(queryTree.generateJavaPredicate().test(negotiationEUR));
-
-
-        final StringBuilder queryBuilder = new StringBuilder();
-        queryTree.appendWhereClause(queryBuilder);
-        assertEquals("(Currency1='UAH' AND Size1<1000000)", queryBuilder.toString());
     }
 
     @Test
@@ -165,11 +125,6 @@ class QueryTreeTest {
         assertTrue(queryTree.generateJavaPredicate().test(negotiationUAH));
         assertFalse(queryTree.generateJavaPredicate().test(negotiationEUR));
         assertTrue(queryTree.generateJavaPredicate().test(negotiationCAD));
-
-
-        final StringBuilder queryBuilder = new StringBuilder();
-        queryTree.appendWhereClause(queryBuilder);
-        assertEquals("(Currency1='UAH' OR Size1<1000000)", queryBuilder.toString());
     }
 
     @Test
@@ -198,10 +153,6 @@ class QueryTreeTest {
         assertTrue(queryTree.generateJavaPredicate().test(negotiationUAH));
         assertTrue(queryTree.generateJavaPredicate().test(negotiationEUR));
         assertFalse(queryTree.generateJavaPredicate().test(negotiationCAD));
-
-        final StringBuilder queryBuilder = new StringBuilder();
-        queryTree.appendWhereClause(queryBuilder);
-        assertEquals("((Currency1='UAH' AND Size1<1000000) OR Currency1='EUR')", queryBuilder.toString());
     }
 
     @Test

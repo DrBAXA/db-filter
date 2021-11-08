@@ -1,8 +1,11 @@
-package com.t360.filtering.core;
+package com.t360.filtering.core.tree;
 
+import com.t360.filtering.core.LogicalOperator;
+import com.t360.filtering.core.PredicateValueDescriptor;
+import com.t360.filtering.core.QueryNode;
 import lombok.Value;
 
-import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -14,27 +17,14 @@ import java.util.stream.Collectors;
  * @param <T> Type of entity representing a table row
  */
 @Value
-public class QueryTree<T> implements QueryNode<T> {
+public class QueryTree<T> implements TreeNode<T> {
 
     LogicalOperator operator;
-    List<QueryNode<T>> predicates;
+    List<TreeNode<T>> predicates;
 
-
-    @Override
-    public void appendWhereClause(StringBuilder queryBuilder) {
-        if (predicates.isEmpty()) return;
-
-        queryBuilder.append("(");
-
-        for (int i = 0, predicatesSize = predicates.size(); i < predicatesSize; i++) {
-            QueryNode<T> predicate = predicates.get(i);
-            predicate.appendWhereClause(queryBuilder);
-            if (i < predicatesSize - 1) {
-                queryBuilder.append(' ').append(operator).append(' ');
-            }
-        }
-
-        queryBuilder.append(")");
+    public QueryTree(LogicalOperator operator, List<TreeNode<T>> predicates) {
+        this.operator = operator;
+        this.predicates = new ArrayList<>(predicates);
     }
 
     /**
@@ -44,18 +34,13 @@ public class QueryTree<T> implements QueryNode<T> {
      */
     @Override
     public String asSqlWhereClause() {
-        return predicates.stream().map(QueryNode::asSqlWhereClause)
+        return predicates.stream().map(TreeNode::asSqlWhereClause)
                 .collect(Collectors.joining(String.format(" %s ", operator.name()), "(", ")"));
     }
 
     @Override
-    public void fillPreparedStatement(PreparedStatement preparedStatement) {
-        // TODO to be implemented
-    }
-
-    @Override
     public List<PredicateValueDescriptor> collectPredicates() {
-        return predicates.stream().map(QueryNode::collectPredicates).flatMap(List::stream).collect(Collectors.toList());
+        return predicates.stream().map(TreeNode::collectPredicates).flatMap(List::stream).collect(Collectors.toList());
     }
 
     /**
@@ -68,9 +53,9 @@ public class QueryTree<T> implements QueryNode<T> {
     public Predicate<T> generateJavaPredicate() {
         switch (operator) {
             case AND:
-                return value -> predicates.stream().map(QueryNode::generateJavaPredicate).allMatch(p -> p.test(value));
+                return value -> predicates.stream().map(TreeNode::generateJavaPredicate).allMatch(p -> p.test(value));
             case OR:
-                return value -> predicates.stream().map(QueryNode::generateJavaPredicate).anyMatch(p -> p.test(value));
+                return value -> predicates.stream().map(TreeNode::generateJavaPredicate).anyMatch(p -> p.test(value));
             default:
                 throw new IllegalStateException("New Operator enum value added"); // should never happen
         }

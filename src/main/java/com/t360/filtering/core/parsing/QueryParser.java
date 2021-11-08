@@ -1,10 +1,12 @@
 package com.t360.filtering.core.parsing;
 
-import com.t360.filtering.core.ColumnPredicate;
+import com.t360.filtering.core.QueryNodeImpl;
+import com.t360.filtering.core.tree.ColumnPredicate;
 import com.t360.filtering.core.QueryNode;
-import com.t360.filtering.core.QueryTree;
+import com.t360.filtering.core.tree.QueryTree;
 import com.t360.filtering.core.QueryTreeParsingService;
 import com.t360.filtering.core.ColumnDescription;
+import com.t360.filtering.core.tree.TreeNode;
 
 import java.util.List;
 import java.util.Map;
@@ -20,15 +22,16 @@ public class QueryParser implements QueryTreeParsingService {
     public <T, F extends Enum<F> & ColumnDescription<T>> QueryNode<T> parse(JsonQuery query, Class<F> tableEnum) {
         String expression = query.getExpression();
         Node tree = expressionParser.parse(expression);
+        final TreeNode<T> treeNode = convertToQueryNode(tree, query.getPredicates(), tableEnum);
 
-        return convertToQueryNode(tree, query.getPredicates(), tableEnum);
+        return new QueryNodeImpl<>(treeNode);
     }
 
-    private <T, F extends Enum<F> & ColumnDescription<T>> QueryNode<T> convertToQueryNode(Node node,
+    private <T, F extends Enum<F> & ColumnDescription<T>> TreeNode<T> convertToQueryNode(Node node,
                                                                                           Map<String, JsonPredicate> predicates,
                                                                                           Class<F> tableDescriptor) {
         if (node instanceof Tree) {
-            final List<QueryNode<T>> subTrees = ((Tree) node).getNodes().stream()
+            final List<TreeNode<T>> subTrees = ((Tree) node).getNodes().stream()
                     .map(subTree -> convertToQueryNode(subTree, predicates, tableDescriptor))
                     .collect(Collectors.toList());
 
@@ -49,7 +52,6 @@ public class QueryParser implements QueryTreeParsingService {
         F columnDescriptor = Enum.valueOf(tableEnum, columnName);
         return new ColumnPredicate<>(columnDescriptor, jsonPredicate.getValue(), jsonPredicate.getOperator());
     }
-
 
 
 }

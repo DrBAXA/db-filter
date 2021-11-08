@@ -1,9 +1,11 @@
-package com.t360.filtering.core;
+package com.t360.filtering.core.tree;
 
 import com.t360.external.json.FieldInstantiationUtil;
+import com.t360.filtering.core.ColumnDescription;
+import com.t360.filtering.core.ComparingOperator;
+import com.t360.filtering.core.PredicateValueDescriptor;
 import lombok.Value;
 
-import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
  * @param <F> type of table describing enum
  */
 @Value
-public class ColumnPredicate<T, F extends ColumnDescription<T>> implements QueryNode<T>, PredicateValueDescriptor {
+public class ColumnPredicate<T, F extends ColumnDescription<T>> implements TreeNode<T>, PredicateValueDescriptor {
 
     private static final Set<ComparingOperator> BINARY_OPERATORS = new HashSet<>();
 
@@ -39,24 +41,6 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
     }
 
     @Override
-    public void appendWhereClause(StringBuilder queryBuilder) {
-        queryBuilder
-                .append(field.getColumnName())
-                .append(' ')
-                .append(operator.getSqlSign())
-                .append(' ');
-        appendValue(queryBuilder);
-    }
-
-    private void appendValue(StringBuilder queryBuilder) {
-        if (value instanceof CharSequence) {
-            queryBuilder.append('\'').append(value).append('\'');
-        } else {
-            queryBuilder.append(value);
-        }
-    }
-
-    @Override
     public Predicate<T> generateJavaPredicate() {
         return createPredicate(field, value, operator);
     }
@@ -77,11 +61,6 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
                 return field.getColumnName() + " " + operator.getSqlSign();
             }
         }
-    }
-
-    @Override
-    public void fillPreparedStatement(PreparedStatement preparedStatement) {
-        // TODO to be implemented
     }
 
     @Override

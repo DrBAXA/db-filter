@@ -1,5 +1,6 @@
 package com.t360.filtering.core;
 
+import com.t360.filtering.core.tree.ColumnPredicate;
 import com.t360.filtering.tables.Negotiation;
 import com.t360.external.entities.NegotiationRow;
 import org.junit.jupiter.api.BeforeEach;
