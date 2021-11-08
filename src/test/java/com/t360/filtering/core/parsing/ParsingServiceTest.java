@@ -40,23 +40,23 @@ class ParsingServiceTest {
                 "    \"A\": {\n" +
                 "      \"field\": \"Size1\",\n" +
                 "      \"value\": 100,\n" +
-                "      \"comparingOperator\": \">=\"\n" +
+                "      \"operator\": \">=\"\n" +
                 "    },\n" +
                 "    \"B\": {\n" +
                 "      \"field\": \"Size2\",\n" +
                 "      \"value\": 10000000,\n" +
-                "      \"comparingOperator\": \"<\"\n" +
+                "      \"operator\": \"<\"\n" +
                 "    },\n" +
                 "    \"C\": {\n" +
                 "      \"field\": \"Currency1\",\n" +
                 "      \"value\": [\"UAH\", \"EUR\"],\n" +
-                "      \"comparingOperator\": \"IN\"\n" +
+                "      \"operator\": \"IN\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}", Negotiation.class);
 
 
-        assertEquals("(SIZE1 >= ? AND (SIZE2 < ? OR CURRENCY1 IN (?)))", queryNode.asSqlWhereClause());
+        assertEquals("(SIZE1 >= ? AND (SIZE2 < ? OR CURRENCY1 IN (?, ?)))", queryNode.asSqlWhereClause());
     }
 
 }

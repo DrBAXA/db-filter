@@ -193,6 +193,11 @@ class ExpressionParserTest {
         assertThrows(IllegalArgumentException.class, () -> parser.parse("A && B & C"));
         assertThrows(IllegalArgumentException.class, () -> parser.parse("A || B & C"));
 
+        //too long expression
+        final String longExpression = "((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((A | ((((((((((((((((((((((((((((((((((((((((B & C))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))";
+        assertThrows(IllegalArgumentException.class, () -> parser.parse(longExpression));
+
+
 
     }
 

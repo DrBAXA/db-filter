@@ -17,7 +17,11 @@ public class ExpressionParser {
     public static final char OPENING_BRACKET = '(';
     public static final char CLOSING_BRACKET = ')';
 
+    static final int MAX_EXPRESSION_LENGTH = 300;
+
     public Node parse(String expression) {
+        if (expression.length() > MAX_EXPRESSION_LENGTH) throw new IllegalArgumentException("Too long expression");
+
         String cleaned = cleanUp(expression);
 
         return parseOR(cleaned)
