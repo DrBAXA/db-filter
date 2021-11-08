@@ -2,7 +2,7 @@ package com.t360.filtering.core;
 
 public interface PredicateValueDescriptor {
 
-    Class getFieldType();
+    Class<?> getFieldType();
 
     Object getValue();
 

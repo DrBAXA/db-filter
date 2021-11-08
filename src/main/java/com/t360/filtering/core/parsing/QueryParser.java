@@ -1,11 +1,10 @@
 package com.t360.filtering.core.parsing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.t360.filtering.core.ColumnPredicate;
 import com.t360.filtering.core.QueryNode;
 import com.t360.filtering.core.QueryTree;
-import com.t360.filtering.tables.ColumnDescription;
+import com.t360.filtering.core.QueryTreeParsingService;
+import com.t360.filtering.core.ColumnDescription;
 
 import java.util.List;
 import java.util.Map;
@@ -15,14 +14,10 @@ import static com.t360.filtering.core.parsing.ExpressionParser.*;
 
 public class QueryParser implements QueryTreeParsingService {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final ExpressionParser expressionParser = new ExpressionParser();
 
     @Override
-    public <T, F extends Enum<F> & ColumnDescription<T>> QueryNode<T> parse(String jsonQuery, Class<F> tableEnum) {
-
-        final JsonQuery query = parseJson(jsonQuery);
-
+    public <T, F extends Enum<F> & ColumnDescription<T>> QueryNode<T> parse(JsonQuery query, Class<F> tableEnum) {
         String expression = query.getExpression();
         Node tree = expressionParser.parse(expression);
 
@@ -55,12 +50,6 @@ public class QueryParser implements QueryTreeParsingService {
         return new ColumnPredicate<>(columnDescriptor, jsonPredicate.getValue(), jsonPredicate.getOperator());
     }
 
-    private JsonQuery parseJson(String jsonQuery) {
-        try {
-            return objectMapper.readValue(jsonQuery, JsonQuery.class);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Invalid JSON", e);
-        }
-    }
+
 
 }

@@ -1,4 +1,4 @@
-package com.t360.filtering.core.parsing;
+package com.t360.external.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

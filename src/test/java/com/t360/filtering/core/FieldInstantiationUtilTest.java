@@ -1,6 +1,6 @@
 package com.t360.filtering.core;
 
-import com.t360.filtering.tables.ColumnDescription;
+import com.t360.external.json.FieldInstantiationUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

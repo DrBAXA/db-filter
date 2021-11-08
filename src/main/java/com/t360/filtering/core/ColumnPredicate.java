@@ -1,8 +1,9 @@
 package com.t360.filtering.core;
 
-import com.t360.filtering.tables.ColumnDescription;
+import com.t360.external.json.FieldInstantiationUtil;
 import lombok.Value;
 
+import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -76,6 +77,11 @@ public class ColumnPredicate<T, F extends ColumnDescription<T>> implements Query
                 return field.getColumnName() + operator.getSqlSign();
             }
         }
+    }
+
+    @Override
+    public void fillPreparedStatement(PreparedStatement preparedStatement) {
+        // TODO to be implemented
     }
 
     @Override

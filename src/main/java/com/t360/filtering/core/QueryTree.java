@@ -2,6 +2,7 @@ package com.t360.filtering.core;
 
 import lombok.Value;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,12 +19,7 @@ public class QueryTree<T> implements QueryNode<T> {
     LogicalOperator operator;
     List<QueryNode<T>> predicates;
 
-    /**
-     * Appends an SQL predicate to provided {@link StringBuilder}
-     * without any leading or trailing spaces, so calling code should care about it.
-     *
-     * @param queryBuilder a {@link StringBuilder} to append a predicate to.
-     */
+
     @Override
     public void appendWhereClause(StringBuilder queryBuilder) {
         if (predicates.isEmpty()) return;
@@ -50,6 +46,11 @@ public class QueryTree<T> implements QueryNode<T> {
     public String asSqlWhereClause() {
         return predicates.stream().map(QueryNode::asSqlWhereClause)
                 .collect(Collectors.joining(String.format(" %s ", operator.name()), "(", ")"));
+    }
+
+    @Override
+    public void fillPreparedStatement(PreparedStatement preparedStatement) {
+        // TODO to be implemented
     }
 
     @Override

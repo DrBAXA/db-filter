@@ -1,5 +1,7 @@
 package com.t360.filtering.tables;
 
+import com.t360.external.entities.NegotiationRow;
+import com.t360.filtering.core.ColumnDescription;
 import lombok.Getter;
 
 import java.math.BigDecimal;

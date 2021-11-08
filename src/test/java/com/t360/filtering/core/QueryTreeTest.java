@@ -1,9 +1,10 @@
 package com.t360.filtering.core;
 
-import com.t360.filtering.tables.NegotiationRow;
+import com.t360.external.entities.NegotiationRow;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,11 @@ class QueryTreeTest {
         }
 
         @Override
+        public void fillPreparedStatement(PreparedStatement preparedStatement) {
+
+        }
+
+        @Override
         public List<PredicateValueDescriptor> collectPredicates() {
             return null;
         }
@@ -52,6 +58,11 @@ class QueryTreeTest {
         }
 
         @Override
+        public void fillPreparedStatement(PreparedStatement preparedStatement) {
+
+        }
+
+        @Override
         public List<PredicateValueDescriptor> collectPredicates() {
             return null;
         }
@@ -71,6 +82,11 @@ class QueryTreeTest {
         @Override
         public String asSqlWhereClause() {
             return null;
+        }
+
+        @Override
+        public void fillPreparedStatement(PreparedStatement preparedStatement) {
+
         }
 
         @Override

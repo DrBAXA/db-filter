@@ -1,6 +1,7 @@
-package com.t360.filtering.core;
+package com.t360.external.json;
 
-import com.t360.filtering.tables.ColumnDescription;
+import com.t360.filtering.core.ComparingOperator;
+import com.t360.filtering.core.ColumnDescription;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;

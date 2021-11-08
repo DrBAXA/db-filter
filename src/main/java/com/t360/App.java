@@ -1,11 +1,12 @@
 package com.t360;
 
-import com.t360.database.DatabaseManager;
+import com.t360.external.json.JsonParsingUtil;
 import com.t360.filtering.core.PredicateValueDescriptor;
 import com.t360.filtering.core.QueryNode;
+import com.t360.filtering.core.parsing.JsonQuery;
 import com.t360.filtering.core.parsing.QueryParser;
-import com.t360.filtering.core.parsing.QueryTreeParsingService;
-import com.t360.filtering.tables.ColumnDescription;
+import com.t360.filtering.core.QueryTreeParsingService;
+import com.t360.filtering.core.ColumnDescription;
 import com.t360.filtering.tables.MidMatchStrategy;
 import com.t360.filtering.tables.Negotiation;
 
@@ -33,7 +34,10 @@ public class App {
 
     private static <T, F extends Enum<F> & ColumnDescription<T>> void executeJsonQuery(String jsonInput, Class<F> tableEnum) throws SQLException {
         QueryTreeParsingService parsingService = new QueryParser();
-        QueryNode<T> rootNode = parsingService.parse(jsonInput, tableEnum);
+
+        final JsonQuery jsonQuery = JsonParsingUtil.parseJson(jsonInput);
+
+        QueryNode<T> rootNode = parsingService.parse(jsonQuery, tableEnum);
         StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ")
                 .append(resolveTableName(tableEnum))
                 .append(" WHERE ")
@@ -77,7 +81,7 @@ public class App {
                 throw new IllegalStateException("Cant correctly configure prepare statement: SQL State " + e.getSQLState());
             }
         };
-        List<String> result = DatabaseManager.execute(sqlQuery.toString(), applyFunction);
+        List<String> result = com.t360.external.database.DatabaseManager.execute(sqlQuery.toString(), applyFunction);
         result.forEach(System.out::println);
     }
 

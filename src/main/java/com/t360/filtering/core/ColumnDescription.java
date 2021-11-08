@@ -1,4 +1,4 @@
-package com.t360.filtering.tables;
+package com.t360.filtering.core;
 
 import java.util.function.Function;
 

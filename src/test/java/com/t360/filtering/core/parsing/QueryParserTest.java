@@ -1,13 +1,13 @@
 package com.t360.filtering.core.parsing;
 
+import com.t360.external.json.JsonParsingUtil;
 import com.t360.filtering.core.QueryNode;
 import com.t360.filtering.tables.Negotiation;
-import com.t360.filtering.tables.NegotiationRow;
+import com.t360.external.entities.NegotiationRow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,10 +22,10 @@ class QueryParserTest {
 
     @Test
     void parse_empty() {
-        final QueryNode<?> queryNode = parsingService.parse("{\n" +
+        final QueryNode<?> queryNode = parsingService.parse(JsonParsingUtil.parseJson("{\n" +
                 "  \"expression\": \"\",\n" +
                 "  \"predicates\": {}\n" +
-                "}", Negotiation.class);
+                "}"), Negotiation.class);
 
         final StringBuilder queryBuilder = new StringBuilder();
         queryNode.appendWhereClause(queryBuilder);
@@ -35,7 +35,7 @@ class QueryParserTest {
 
     @Test
     void parse_severalPredicates() {
-        final QueryNode<NegotiationRow> queryNode = parsingService.parse("{\n" +
+        final QueryNode<NegotiationRow> queryNode = parsingService.parse(JsonParsingUtil.parseJson("{\n" +
                 "  \"expression\": \"(A | D) & (B | C)\",\n" +
                 "  \"predicates\": {\n" +
                 "    \"A\": {\n" +
@@ -59,7 +59,7 @@ class QueryParserTest {
                 "      \"operator\": \"IN\"\n" +
                 "    }\n" +
                 "  }\n" +
-                "}", Negotiation.class);
+                "}"), Negotiation.class);
 
 
         assertEquals("((SIZE1 >= ? OR CURRENCY1 = ?) AND (SIZE2 < ? OR CURRENCY1 IN (?, ?)))", queryNode.asSqlWhereClause());
@@ -92,7 +92,7 @@ class QueryParserTest {
 
     @Test
     void parse_wrong() {
-        final String missingPredicateQuery = "{\n" +
+        final JsonQuery missingPredicateQuery = JsonParsingUtil.parseJson("{\n" +
                 "  \"expression\": \"A & (B | C)\",\n" +
                 "  \"predicates\": {\n" +
                 "    \"A\": {\n" +
@@ -106,7 +106,7 @@ class QueryParserTest {
                 "      \"operator\": \"<\"\n" +
                 "    }\n" +
                 "  }\n" +
-                "}";
+                "}");
 
         assertThrows(IllegalArgumentException.class, () -> parsingService.parse(missingPredicateQuery, Negotiation.class));
     }

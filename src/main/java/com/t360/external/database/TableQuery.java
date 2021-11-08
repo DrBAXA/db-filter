@@ -1,4 +1,4 @@
-package com.t360.filtering.tables;
+package com.t360.external.database;
 
 public interface TableQuery {
 

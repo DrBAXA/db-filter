@@ -1,5 +1,6 @@
 package com.t360.filtering.core;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -8,11 +9,30 @@ import java.util.function.Predicate;
  */
 public interface QueryNode<T> {
 
-    /*
-     * TODO add a method to fulfill prepared statement
-     *  here just set placeholders
+    /**
+     * Appends an SQL predicate to provided {@link StringBuilder}
+     * without any leading or trailing spaces, so calling code should care about it.
+     * See {@link #asSqlWhereClause()}
+     *
+     * @param queryBuilder a {@link StringBuilder} to append a predicate to.
      */
-    void appendWhereClause(StringBuilder queryBuilder);
+    default void appendWhereClause(StringBuilder queryBuilder) {
+        queryBuilder.append(asSqlWhereClause());
+    }
+
+    /**
+     * Creates a string predicate that can be used as WHERE clause for prepared statement creation.
+     * All required values are provided as '?' placeholders
+     * and need to be filled by calling {@link #fillPreparedStatement(PreparedStatement)}
+     *
+     * @return a String that can be used after WHERE keyword for creating prepared statement
+     */
+    String asSqlWhereClause();
+
+    void fillPreparedStatement(PreparedStatement preparedStatement);
+
+    // TODO this probably need to be private encapsulated method
+    List<PredicateValueDescriptor> collectPredicates();
 
     /**
      * Creates predicate that can be applied to Java representation of the table row
@@ -20,10 +40,6 @@ public interface QueryNode<T> {
      * @return predicate that tests objects for corresponding of this Query
      */
     Predicate<T> generateJavaPredicate();
-
-    String asSqlWhereClause();
-
-    List<PredicateValueDescriptor> collectPredicates();
 
 }
 

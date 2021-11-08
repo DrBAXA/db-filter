@@ -1,7 +1,6 @@
-package com.t360.database;
+package com.t360.external.database;
 
 import com.t360.filtering.core.QueryNode;
-import com.t360.filtering.tables.TableQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.hsqldb.cmdline.SqlFile;
 import org.hsqldb.cmdline.SqlToolError;
