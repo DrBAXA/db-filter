@@ -39,7 +39,7 @@ public class App {
 
 
 
-        json = "{\"expression\":\"A\",\"predicates\":{\"A\":{\"field\":\"Symbol\",\"value\":[\"AA\", \"DD\"],\"operator\":\"NOT IN\"}}}";
+        json = "{\"expression\":\"A\",\"predicates\":{\"A\":{\"field\":\"Is_base_notional\",\"value\":true,\"operator\":\"=\"}}}";
         executeJsonQuery("Complex query to second table", json, MidMatchStrategy.class);
     }
 

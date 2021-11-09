@@ -39,19 +39,33 @@ public class DatabaseManager {
             List<String> lines = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             int columnCount = rs.getMetaData().getColumnCount();
+
+            // Column names in first row
+            lines.add(joinValues(rs.getMetaData()::getColumnName, columnCount));
+
+            // column values
             while (rs.next()) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 1; i < columnCount; i++) {
-                    sb.append(rs.getString(i)).append("\t");
-                }
-                lines.add(sb.toString());
+                lines.add(joinValues(rs::getString, columnCount));
             }
             return lines;
         }
     }
 
+    private static String joinValues(ValueExtractor valueByIndex, int columnCount) throws SQLException {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= columnCount; i++) {
+            sb.append(valueByIndex.getByIndex(i)).append("\t");
+        }
+        return sb.toString();
+    }
+
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(connectionURL, "SA", "");
+    }
+
+    @FunctionalInterface
+    private interface ValueExtractor {
+        String getByIndex(int index) throws SQLException;
     }
 
 }
