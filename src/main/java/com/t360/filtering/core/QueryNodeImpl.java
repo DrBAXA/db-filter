@@ -43,19 +43,19 @@ public class QueryNodeImpl<T> implements QueryNode<T> {
 
     private void resolveAndSetField(PreparedStatement ps, int index, Class<?> valueClass, Object val) throws SQLException {
         if (valueClass.equals(BigDecimal.class)) {
-            ps.setBigDecimal(index++, (BigDecimal) val);
+            ps.setBigDecimal(index, (BigDecimal) val);
         } else if (valueClass.equals(String.class)) {
-            ps.setString(index++, (String) val);
+            ps.setString(index, (String) val);
         } else if (valueClass.equals(Boolean.class)) {
-            ps.setBoolean(index++, (Boolean) val);
+            ps.setBoolean(index, (Boolean) val);
         } else if (valueClass.equals(Byte.class)) {
-            ps.setByte(index++, (Byte) val);
+            ps.setByte(index, (Byte) val);
         } else if (valueClass.equals(Short.class)) {
-            ps.setShort(index++, (Short) val);
+            ps.setShort(index, (Short) val);
         } else if (valueClass.equals(Integer.class)) {
-            ps.setInt(index++, (Integer) val);
+            ps.setInt(index, (Integer) val);
         } else if (valueClass.equals(Long.class)) {
-            ps.setLong(index++, (Long) val);
+            ps.setLong(index, (Long) val);
         }
         // todo check if array works on other jdbc vendors
 //         Object[] array = ((Collection<?>) valHolder.getValue()).toArray();

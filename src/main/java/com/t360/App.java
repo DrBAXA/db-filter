@@ -36,11 +36,6 @@ public class App {
         // SYMBOL IN [CC, DD] and STRATEGY_TYPE > 2000
         json = "{\"expression\":\"(A&B&C)|(D&E)\",\"predicates\":{\"A\":{\"field\":\"Symbol\",\"value\":[\"AA\", \"DD\"],\"operator\":\"NOT IN\"}, \"B\":{\"field\":\"Spot_sensitivity_price\",\"operator\":\"IS NOT NULL\"}, \"C\":{\"field\":\"Strategy_type\",\"value\":1300,\"operator\":\"<\"}, \"D\":{\"field\":\"Symbol\",\"value\":[\"CC\", \"DD\"],\"operator\":\"IN\"}, \"E\":{\"field\":\"Strategy_type\",\"value\":2000,\"operator\":\">=\"}}}";
         executeJsonQuery("Complex query to second table", json, MidMatchStrategy.class);
-
-
-
-        json = "{\"expression\":\"A\",\"predicates\":{\"A\":{\"field\":\"Symbol\",\"value\":[\"AA\", \"DD\"],\"operator\":\"NOT IN\"}}}";
-        executeJsonQuery("Complex query to second table", json, MidMatchStrategy.class);
     }
 
     private static <T, F extends Enum<F> & ColumnDescription<T>> void executeJsonQuery(String testName, String jsonInput, Class<F> tableEnum) throws SQLException {
