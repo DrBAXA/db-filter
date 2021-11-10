@@ -71,8 +71,11 @@
       <version>3.12.4</version>
       <scope>test</scope>
     </dependency>
-
-
+    <dependency>
+      <groupId>io.javalin</groupId>
+      <artifactId>javalin</artifactId>
+      <version>4.1.1</version>
+    </dependency>
 
   </dependencies>
 
