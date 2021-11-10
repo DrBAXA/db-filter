@@ -57,20 +57,8 @@ public class QueryNodeImpl<T> implements QueryNode<T> {
         } else if (valueClass.equals(Long.class)) {
             ps.setLong(index, (Long) val);
         }
-        // todo check if array works on other jdbc vendors
-//         Object[] array = ((Collection<?>) valHolder.getValue()).toArray();
-//         String typeName = resolveJdbcType(array[0]);
-//         Array sqlArray = ps.getConnection().createArrayOf(typeName, array);
-//         ps.setArray(index++, sqlArray);
     }
 
-    private String resolveJdbcType(Object obj) {
-        if (obj instanceof String) return JDBCType.VARCHAR.getName();
-        else if (obj instanceof Long) return JDBCType.BIGINT.getName();
-        else if (obj instanceof Integer) return JDBCType.INTEGER.getName();
-        else if (obj instanceof BigDecimal) return JDBCType.DECIMAL.getName();
-        else throw new IllegalStateException("Does not support '" + obj.getClass().getSimpleName() + "' type yet");
-    }
 
     @Override
     public List<PredicateValueDescriptor> collectPredicates() {
