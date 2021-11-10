@@ -29,7 +29,7 @@ class IntegrationTest {
     private static final String GET_NEGOTIATIONS_TEMPLATE = "SELECT * FROM NEGOTIATION";
     private static final String GET_MID_MATCH_STRATEGY_TEMPLATE = "SELECT * FROM MID_MATCH_STRATEGY";
 
-    private QueryParser queryParser = new QueryParser();
+    private final QueryParser queryParser = new QueryParser();
 
     @BeforeAll
     static void setUp() throws SQLException, SqlToolError, IOException {

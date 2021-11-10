@@ -1,9 +1,5 @@
 package com.t360.external.database;
 
-import com.t360.external.entities.MidMatchStrategyRow;
-import com.t360.external.entities.NegotiationRow;
-import com.t360.filtering.tables.MidMatchStrategy;
-import com.t360.filtering.tables.Negotiation;
 import lombok.extern.slf4j.Slf4j;
 import org.hsqldb.cmdline.SqlFile;
 import org.hsqldb.cmdline.SqlToolError;
@@ -13,7 +9,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -39,7 +34,7 @@ public class DatabaseManager {
              PreparedStatement ps = connection.prepareStatement(query)) {
 
             // enrich statement values if such exist
-            Optional.ofNullable(consumer).ifPresent(c -> c.accept(ps));
+            consumer.accept(ps);
             List<String> lines = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             int columnCount = rs.getMetaData().getColumnCount();

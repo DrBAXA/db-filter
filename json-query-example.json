@@ -4,17 +4,17 @@
     "A": {
       "field": "Size1",
       "value": 100,
-      "comparingOperator": ">="
+      "operator": ">="
     },
     "B": {
       "field": "Size2",
       "value": 10000000,
-      "comparingOperator": "<"
+      "operator": "<"
     },
     "C": {
       "field": "Currency1",
       "value": ["UAH", "EUR"],
-      "comparingOperator": "IN"
+      "operator": "IN"
     }
   }
 }
