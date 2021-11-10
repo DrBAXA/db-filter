@@ -13,7 +13,7 @@ import com.t360.filtering.tables.Negotiation;
 import java.sql.SQLException;
 import java.util.List;
 
-public class App {
+public class JsonToSqlParserApp {
 
     public static void main(String[] args) throws SQLException {
         String json;
