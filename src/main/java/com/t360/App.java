@@ -33,7 +33,7 @@ public class App {
 
         // SYMBOL NOT IN [AA, DD] and SPOT_SENSITIVITY_PRICE IS NOT NULL and STRATEGY_TYPE < 1300
         // OR
-        // SYMBOL IN [CC, DD] and STRATEGY_TYPE > 2000
+        // SYMBOL IN [CC, DD] and STRATEGY_TYPE >= 2000
         json = "{\"expression\":\"(A&B&C)|(D&E)\",\"predicates\":{\"A\":{\"field\":\"Symbol\",\"value\":[\"AA\", \"DD\"],\"operator\":\"NOT IN\"}, \"B\":{\"field\":\"Spot_sensitivity_price\",\"operator\":\"IS NOT NULL\"}, \"C\":{\"field\":\"Strategy_type\",\"value\":1300,\"operator\":\"<\"}, \"D\":{\"field\":\"Symbol\",\"value\":[\"CC\", \"DD\"],\"operator\":\"IN\"}, \"E\":{\"field\":\"Strategy_type\",\"value\":2000,\"operator\":\">=\"}}}";
         executeJsonQuery("Complex query to second table", json, MidMatchStrategy.class);
     }
@@ -56,7 +56,7 @@ public class App {
     }
 
     private static <T extends Enum<T>> String resolveTableName(Class<T> table) {
-        //todo use camelCase to _ transformation if its possible
+        //todo use camelCase to apply underscore (_) transformation if its possible
         if (table.equals(Negotiation.class)) return "NEGOTIATION";
         if (table.equals(MidMatchStrategy.class)) return "MID_MATCH_STRATEGY";
         throw new IllegalStateException(table.getSimpleName() + " table not supported yet");
