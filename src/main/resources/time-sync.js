@@ -8,7 +8,7 @@ class TimeSync {
             console.log("Time synchronized")
             const view = new DataView(message.data)
             this.lastServerTime = Number(view.getBigUint64(0))
-            this.lastClientTime = new Date().getUTCMilliseconds();
+            this.lastClientTime = new Date().valueOf();
         }
     }
 
@@ -16,7 +16,7 @@ class TimeSync {
      * Returns current server time
      */
     getServerTime() {
-        return this.lastServerTime + (new Date().getUTCMilliseconds() - this.lastClientTime)
+        return this.lastServerTime + (new Date().valueOf() - this.lastClientTime)
     }
 
     /**
