@@ -76,6 +76,7 @@ public enum Negotiation implements ColumnDescription<NegotiationRow> {
     }
 }
 ```
+
 #### Sample usage with PreparedStatement
 ```java
 QueryTreeParsingService parsingService = new QueryParser();
@@ -94,4 +95,17 @@ PreparedStatement ps = connection.prepareStatement(query));
 
 rootNode.fillPreparedStatement(ps)ж
 ResultSet rs = ps.executeQuery();
+```
+
+#### Sample usage with as `Predicate<T>`
+```java
+QueryTreeParsingService parsingService = new QueryParser();
+JsonQuery jsonQuery = JsonParsingUtil.parseJson(jsonInput);
+
+QueryNode<NegotiationRow> rootNode = parsingService.parse(jsonQuery, tableEnum);
+
+Predicate<NegotiationRow> predicate = rootNode.generateJavaPredicate();
+
+List<NegotiationRow> entities = getEntities();
+List<NegotiationRow> filtered = entities.stream().filter(predicate).collect(Collectors.toList());
 ```
