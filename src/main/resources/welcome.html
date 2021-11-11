@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <title>Time sync</title>
+    <meta charset="utf-8"/>
+</head>
+<body>
+<h1>Server time</h1>
+<h2 id="server-time"></h2>
+<h1>Client time</h1>
+<h2 id="client-time"></h2>
+</body>
+<script type="module">
+    import TimeProvider from "./time-sync.js";
+
+    let timeProvider = new TimeProvider('ws://localhost:8080/ws')
+
+    function updateTime() {
+        let serverTime = timeProvider.getServerTime();
+        if (serverTime) {
+            let server = new Date(serverTime);
+            document.getElementById("server-time").innerHTML = server.toLocaleTimeString([], { hour12: false }) + "." + server.getMilliseconds();
+
+            let client = new Date(timeProvider.getLocalTime());
+            document.getElementById("client-time").innerHTML = client.toLocaleTimeString([], { hour12: false }) + "." + server.getMilliseconds();
+        }
+    }
+
+    window.setInterval(updateTime, 100)
+</script>
+</html>

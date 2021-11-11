@@ -12,9 +12,12 @@ public class TimeSyncApp {
         controller.initiate();
         Javalin.create()
                 .routes(() -> {
-                    path("/welcome", () -> {
+                    path("/", () -> {
                         get(controller::welcomePage);
                         ws("/ws", controller::wsHandle);
+                    });
+                    path("/time-sync.js", () -> {
+                        get(controller::js);
                     });
                 }).start(8080);
     }
